@@ -1,3 +1,4 @@
+package com.onefa.chess;
 /*
 Класс Pawn.
 Пешка.

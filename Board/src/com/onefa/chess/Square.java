@@ -1,3 +1,5 @@
+package com.onefa.chess;
+
 public class Square {
     boolean color;
     Piece piece = null;

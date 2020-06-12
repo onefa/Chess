@@ -1,3 +1,4 @@
+package com.onefa.chess;
 /*
 Класс Place.
 Содержит данные о местоположении фигуры.
@@ -6,18 +7,14 @@
 Не проверяет, занята ли клетка другой фигурой.
  */
 
-import java.util.ArrayList;
-
 public class Place {
     int placeV;         // vertical (alphbet) coordinate at board
     int placeH;         // horizontal (digital) coordinate at board
-    ChessBoard board;   // board for game
 
     // Constructor. Initialization Place on board
-    public Place (ChessBoard board, int placeV, int placeH) {
-        if (placeV > 0 && placeV <= board.DIMENSION_V &&
-            placeH > 0 && placeH <= board.DIMENSION_H) {
-            this.board = board;
+    public Place (int placeV, int placeH) {
+        if (placeV >= 0 && placeV < ChessBoard.DIMENSION_V &&
+            placeH >= 0 && placeH < ChessBoard.DIMENSION_H) {
             this.placeV = placeV;
             this.placeH = placeH;
         }
@@ -35,36 +32,36 @@ public class Place {
     }
 
     // Returns Place with vertical coordinate increment
-    public Place getIncV(){
-        if (placeV < board.DIMENSION_V) {
-            return new Place(board, placeV++, placeH);
+    public Place withIncrementVertical(Place place){
+        if (place.placeV < ChessBoard.DIMENSION_V) {
+            return new Place(place.placeV+1, place.placeH);
         }else{
             return null;
         }
     }
 
     // Returns Place with vertical coordinate decrement
-    public Place getDecV(){
-        if (placeV > 1) {
-            return new Place(board, placeV--, placeH);
+    public Place withDecrementVertical(Place place){
+        if (place.placeV > 0) {
+            return new Place(place.placeV-1, place.placeH);
         }else{
             return null;
         }
     }
 
     // Returns Place with horizontal coordinate increment
-    public Place getIncH(){
-        if (placeH < board.DIMENSION_H) {
-            return new Place(board, placeV, placeH++);
+    public Place withIncrementHorizontal(Place place){
+        if (place.placeH < ChessBoard.DIMENSION_H) {
+            return new Place(place.placeV, place.placeH+1);
         }else{
             return null;
         }
     }
 
     // Returns Place with horizontal coordinate decrement
-    public Place getDecH(){
-        if (placeH > 1) {
-            return new Place(board, placeV, placeH--);
+    public Place withDecrementHorizontal(Place place){
+        if (place.placeH > 0) {
+            return new Place(place.placeV, place.placeH-1);
         }else{
             return null;
         }
