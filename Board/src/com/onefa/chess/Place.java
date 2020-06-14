@@ -20,6 +20,21 @@ public class Place {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Place)){
+            return false;
+        }else{
+            Place toCompare = (Place) obj;
+            return (this.placeV == toCompare.placeV && this.placeH == toCompare.placeH);
+        }
+    }
+
+    public static boolean outOfBorders(int placeV, int placeH){
+        return !(placeV >= 0 && placeV < ChessBoard.DIMENSION_V &&
+                 placeH >= 0 && placeH < ChessBoard.DIMENSION_H);
+    }
+
     // Changes coordinates using another Place object
     public void setPlace(Place place){
         this.placeV = place.placeV;
@@ -32,8 +47,8 @@ public class Place {
     }
 
     // Returns Place with vertical coordinate increment
-    public Place withIncrementVertical(Place place){
-        if (place.placeV < ChessBoard.DIMENSION_V) {
+    public static Place withIncrementVertical(Place place){
+        if (place.placeV < ChessBoard.MAX_VERTICAL) {
             return new Place(place.placeV+1, place.placeH);
         }else{
             return null;
@@ -41,7 +56,7 @@ public class Place {
     }
 
     // Returns Place with vertical coordinate decrement
-    public Place withDecrementVertical(Place place){
+    public static Place withDecrementVertical(Place place){
         if (place.placeV > 0) {
             return new Place(place.placeV-1, place.placeH);
         }else{
@@ -50,8 +65,8 @@ public class Place {
     }
 
     // Returns Place with horizontal coordinate increment
-    public Place withIncrementHorizontal(Place place){
-        if (place.placeH < ChessBoard.DIMENSION_H) {
+    public static Place withIncrementHorizontal(Place place){
+        if (place.placeH < ChessBoard.MAX_HORIZONTAL) {
             return new Place(place.placeV, place.placeH+1);
         }else{
             return null;
@@ -59,7 +74,7 @@ public class Place {
     }
 
     // Returns Place with horizontal coordinate decrement
-    public Place withDecrementHorizontal(Place place){
+    public static Place withDecrementHorizontal(Place place){
         if (place.placeH > 0) {
             return new Place(place.placeV, place.placeH-1);
         }else{

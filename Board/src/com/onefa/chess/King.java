@@ -17,8 +17,8 @@ public class King extends Piece{
             for (int j = -1; j <2; j++) {
                 if (i != 0 || j != 0) {
                     aPlace = new Place(this.placeV + i, placeH + j);
-                    if (aPlace != null && board.isEmptySquare(aPlace) ||
-                            board.isOpponentSquare(this.color, aPlace)){
+                    if (aPlace != null && board.isEmptySquare(aPlace.getPlace().placeV, aPlace.getPlace().placeH) ||
+                            board.isOpponentSquare(this.color, aPlace.getPlace().placeV, aPlace.getPlace().placeH)){
                         aPlaces.add(aPlace);
                     }
                 }

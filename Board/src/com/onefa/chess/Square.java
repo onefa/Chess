@@ -1,11 +1,11 @@
 package com.onefa.chess;
 
-public class Square {
-    boolean color;
+public class Square{
+    boolean white;
     Piece piece = null;
 
     public Square(boolean color) {
-        this.color = color;
+        this.white = color;
     }
 
     public void setPiece(Piece piece) {

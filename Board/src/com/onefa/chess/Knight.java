@@ -18,8 +18,8 @@ public class Knight extends Piece{
             for (int j = -2; j <3; j++) {
                 if (i != 0 && j != 0 && i + j != 0 && i != j) {
                     aPlace = new Place(this.placeV + i, placeH + j);
-                    if (aPlace != null && (board.isEmptySquare(aPlace) ||
-                        board.isOpponentSquare(this.color, aPlace))) {
+                    if (aPlace != null && (board.isEmptySquare(aPlace.getPlace().placeV, aPlace.getPlace().placeH) ||
+                        board.isOpponentSquare(this.color, aPlace.getPlace().placeV, aPlace.getPlace().placeH))) {
                         aPlaces.add(aPlace);
                     }
                 }

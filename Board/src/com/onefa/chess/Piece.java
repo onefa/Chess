@@ -23,7 +23,7 @@ public abstract class Piece extends Place {
     // Remove Piece out of game
     public void outGame(){
         inGame = false;
-        board.setEmptySquare(this.getPlace());
+        board.setEmptySquare(this.getPlace().placeV, this.getPlace().placeH);
     }
 
     public Place functionResult (Place place, Direction function) {
@@ -39,11 +39,13 @@ public abstract class Piece extends Place {
         ArrayList<Place> aPlaces = new ArrayList<>();
         Place nextAttack = functionResult(place, function);
 
-        while (nextAttack != null && board.isEmptySquare(nextAttack)){
+        while (nextAttack != null && board.isEmptySquare(nextAttack.getPlace().placeV,
+                                                         nextAttack.getPlace().placeH)){
             aPlaces.add(nextAttack);
             nextAttack = functionResult(nextAttack, function);
         }
-        if (nextAttack != null && board.isOpponentSquare(this.color, nextAttack)){
+        if (nextAttack != null && board.isOpponentSquare(this.color, nextAttack.getPlace().placeV,
+                                                                     nextAttack.getPlace().placeH)){
             aPlaces.add(nextAttack);
         }
         return aPlaces;

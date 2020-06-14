@@ -13,10 +13,10 @@ public class Rook extends Piece{
     @Override
     public ArrayList<Place> getAttackPlaces() {
         ArrayList<Place> aPlaces = new ArrayList<>();
-        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), this::withIncrementVertical));
-        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), this::withDecrementVertical));
-        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), this::withIncrementHorizontal));
-        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), this::withDecrementHorizontal));
+        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), Place::withIncrementVertical));
+        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), Place::withDecrementVertical));
+        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), Place::withIncrementHorizontal));
+        aPlaces.addAll(getAttackPlacesOnDirection(this.getPlace(), Place::withDecrementHorizontal));
 
         return aPlaces;
     }
