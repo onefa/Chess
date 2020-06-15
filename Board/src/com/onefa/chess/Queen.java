@@ -2,7 +2,7 @@ package com.onefa.chess;
 
 import java.util.ArrayList;
 
-public class Queen extends Piece{
+public class Queen extends Piece {
 
     // Constructor
     public Queen(ChessBoard board, int placeV, int placeH, boolean color) {

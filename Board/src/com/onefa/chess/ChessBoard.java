@@ -8,10 +8,10 @@ public class ChessBoard {
     final static boolean BLACK = false;
     final static int DIMENSION_V = 8;
     final static int DIMENSION_H = 8;
-    final static int MAX_VERTICAL = DIMENSION_V-1;
-    final static int MAX_HORIZONTAL = DIMENSION_H-1;
+    final static int MAX_VERTICAL = DIMENSION_V - 1;
+    final static int MAX_HORIZONTAL = DIMENSION_H - 1;
     final static int KING_INDEX = 12;
-    Piece[][] armies = new Piece[2][2*DIMENSION_V]; // Arrays of armies.
+    Piece[][] armies = new Piece[2][2 * DIMENSION_V]; // Arrays of armies.
     Piece[] armyWhite = armies[0];
     Piece[] armyBlack = armies[1];
     Square[][] boardArray = new Square[DIMENSION_V][DIMENSION_H];
@@ -38,16 +38,16 @@ public class ChessBoard {
 
     // Constructor.
     // Creates array of Square's, creates armies on initial position
-    public ChessBoard () {
+    public ChessBoard() {
         boolean color = BLACK;
-        for (int i = 0; i < DIMENSION_V; i++){
-            for (int j = 0; j < DIMENSION_H; j++){
+        for (int i = 0; i < DIMENSION_V; i++) {
+            for (int j = 0; j < DIMENSION_H; j++) {
                 boardArray[i][j] = new Square(color);
                 color = !color;
             }
         }
 
-        for (int i = 0; i < DIMENSION_V; i++){
+        for (int i = 0; i < DIMENSION_V; i++) {
             armyWhite[i] = new Pawn(this, i, 1, WHITE);
         }
         {
@@ -63,7 +63,7 @@ public class ChessBoard {
             armyWhite[i] = new Rook(this, j, 0, WHITE);
         }
 
-        for (int i = 0; i < DIMENSION_V; i++){
+        for (int i = 0; i < DIMENSION_V; i++) {
             armyBlack[i] = new Pawn(this, i, 6, BLACK);
         }
         {
@@ -82,18 +82,18 @@ public class ChessBoard {
     }
 
     //
-    public void killPiece(Piece piece){
+    public void killPiece(Piece piece) {
         piece.setInGame(false);
         setEmptySquare(piece.getPlace().placeV, piece.getPlace().placeH);
     }
 
     // Clear square from piece
-    public void setEmptySquare (int placeV, int placeH){
+    public void setEmptySquare(int placeV, int placeH) {
         boardArray[placeV][placeH].setPiece(null);
     }
 
     // Checks if square is empty
-    public boolean isEmptySquare (int placeV, int placeH) {
+    public boolean isEmptySquare(int placeV, int placeH) {
         if (Place.outOfBorders(placeV, placeH)) {
             return false;
         }
@@ -106,7 +106,7 @@ public class ChessBoard {
     }
 
     // Checks if Opponents piece is on square
-    public boolean isOpponentSquare (boolean color, int placeV, int placeH) {
+    public boolean isOpponentSquare(boolean color, int placeV, int placeH) {
         if (Place.outOfBorders(placeV, placeH)) {
             return false;
         }
@@ -132,7 +132,7 @@ public class ChessBoard {
         return false;
     }
 
-    public boolean move (String fromTo){
+    public boolean move(String fromTo) {
         int[] coordinatesArray = new int[4];
 
         if (fromTo.length() == 4) {
@@ -149,7 +149,7 @@ public class ChessBoard {
                             new Place(coordinatesArray[2], coordinatesArray[3]))) {
                     Piece movedPiece = boardArray[coordinatesArray[2]][coordinatesArray[3]].getPiece();
                     if (movedPiece.getClass() == Pawn.class) {
-                        if (enPassant != null && enPassant.getMaster()!=null
+                        if (enPassant != null && enPassant.getMaster() != null
                                 && movedPiece.getPlace().equals(enPassant.getPlace())) {
                             killPiece(enPassant.getMaster());
                             clearEnPassant();
@@ -168,7 +168,7 @@ public class ChessBoard {
         return false;
     }
 
-    private boolean doMove (Place placeFrom, Place placeTo) {
+    private boolean doMove(Place placeFrom, Place placeTo) {
         Piece movedPiece = boardArray[placeFrom.placeV][placeFrom.placeH].getPiece();
         for (Place attackPlace : movedPiece.getAttackPlaces()) {
             if (attackPlace.equals(placeTo)) {
@@ -181,7 +181,6 @@ public class ChessBoard {
                     boardArray[placeFrom.placeV][placeFrom.placeH].setPiece(movedPiece);
                     return false;
                 }
-
                 return true;
             }
         }
@@ -203,7 +202,7 @@ public class ChessBoard {
         }
     }
 
-    private static class EnPassant extends Piece{
+    private static class EnPassant extends Piece {
 
         private Pawn master = null;
 
@@ -226,7 +225,7 @@ public class ChessBoard {
 
         }
 
-        public void clearMaster(){
+        public void clearMaster() {
             this.inGame = false;
             this.master = null;
         }

@@ -23,7 +23,7 @@ package com.onefa.chess;
  */
 import java.util.ArrayList;
 
-public class Pawn extends Piece{
+public class Pawn extends Piece {
 
     public Pawn(ChessBoard board, int placeV, int placeH, boolean color) {
         super(board, placeV, placeH, color);
@@ -32,31 +32,28 @@ public class Pawn extends Piece{
     @Override
     public ArrayList<Place> getAttackPlaces() {
         ArrayList<Place> aPlaces = new ArrayList<>();
-
         int attackDirection;
 
         // Attack direction (plus for Whites and minus for Blacks)
-        if (this.color == ChessBoard.WHITE){
+        if (this.color == ChessBoard.WHITE) {
             attackDirection = 1;
         }else{
             attackDirection = -1;
         }
 
         // Checks square for one and two steps forward
-        for (int i = 1; i<3; i++){
-            if (board.isEmptySquare(this.getPlace().placeV, this.getPlace().placeH+attackDirection*i)){
-                aPlaces.add(new Place(this.getPlace().placeV, this.getPlace().placeH+attackDirection*i));
+        for (int i = 1; i < 3; i++) {
+            if (board.isEmptySquare(this.getPlace().placeV, this.getPlace().placeH + attackDirection * i)) {
+                aPlaces.add(new Place(this.getPlace().placeV, this.getPlace().placeH + attackDirection * i));
             }
         }
 
         // Checks square for attack steps
-        for (int i = -1; i<2; i=i+2){
-
-            if (board.isOpponentSquare(this.color, this.getPlace().placeV+i, this.getPlace().placeH+attackDirection)){
-                aPlaces.add(new Place(this.getPlace().placeV+i, this.getPlace().placeH+attackDirection));
+        for (int i = -1; i < 2; i = i + 2) {
+            if (board.isOpponentSquare(this.color, this.getPlace().placeV + i, this.getPlace().placeH + attackDirection)) {
+                aPlaces.add(new Place(this.getPlace().placeV + i, this.getPlace().placeH + attackDirection));
             }
         }
-
         return aPlaces;
     }
 }

@@ -15,7 +15,7 @@ public class Knight extends Piece{
         ArrayList<Place> aPlaces = new ArrayList<>();
         Place aPlace;
         for (int i = -2; i < 3; i++) {
-            for (int j = -2; j <3; j++) {
+            for (int j = -2; j < 3; j++) {
                 if (i != 0 && j != 0 && i + j != 0 && i != j) {
                     aPlace = new Place(this.placeV + i, placeH + j);
                     if (aPlace != null && (board.isEmptySquare(aPlace.getPlace().placeV, aPlace.getPlace().placeH) ||
@@ -25,7 +25,6 @@ public class Knight extends Piece{
                 }
             }
         }
-
         return aPlaces;
     }
 }

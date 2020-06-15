@@ -2,7 +2,7 @@ package com.onefa.chess;
 
 import java.util.ArrayList;
 
-public class Bishop extends Piece{
+public class Bishop extends Piece {
 
     public Bishop(ChessBoard board, int placeV, int placeH, boolean color) {
         super(board, placeV, placeH, color);

@@ -1,6 +1,6 @@
 package com.onefa.chess;
 
-public class Square{
+public class Square {
     boolean white;
     Piece piece = null;
 

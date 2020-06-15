@@ -24,26 +24,26 @@ public abstract class Piece extends Place {
         this.inGame = inGame;
     }
 
-    public Place functionResult (Place place, Direction function) {
-        try{
+    public Place functionResult(Place place, Direction function) {
+        try {
             return function.nextAttackPlace(place);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
     }
 
     // Returns ArrayList of Place's with defined function of direction
-    public ArrayList<Place> getAttackPlacesOnDirection (Place place, Direction function){
+    public ArrayList<Place> getAttackPlacesOnDirection(Place place, Direction function) {
         ArrayList<Place> aPlaces = new ArrayList<>();
         Place nextAttack = functionResult(place, function);
 
         while (nextAttack != null && board.isEmptySquare(nextAttack.getPlace().placeV,
-                                                         nextAttack.getPlace().placeH)){
+                                                         nextAttack.getPlace().placeH)) {
             aPlaces.add(nextAttack);
             nextAttack = functionResult(nextAttack, function);
         }
         if (nextAttack != null && board.isOpponentSquare(this.color, nextAttack.getPlace().placeV,
-                                                                     nextAttack.getPlace().placeH)){
+                                                                     nextAttack.getPlace().placeH)) {
             aPlaces.add(nextAttack);
         }
         return aPlaces;
@@ -52,7 +52,6 @@ public abstract class Piece extends Place {
     // Returns ArrayList of all available Place's for attack.
     // This method defined in respectively classes
     abstract public ArrayList<Place> getAttackPlaces();
-
 
 }
 
