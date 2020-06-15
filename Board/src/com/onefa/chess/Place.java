@@ -13,8 +13,7 @@ public class Place {
 
     // Constructor. Initialization Place on board
     public Place (int placeV, int placeH) {
-        if (placeV >= 0 && placeV < ChessBoard.DIMENSION_V &&
-            placeH >= 0 && placeH < ChessBoard.DIMENSION_H) {
+        if (!outOfBorders(placeV, placeH)) {
             this.placeV = placeV;
             this.placeH = placeH;
         }

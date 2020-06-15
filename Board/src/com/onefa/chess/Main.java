@@ -6,6 +6,7 @@ public class Main {
 
         System.out.println("===== All results are in internal integer addressing =====");
 
+
         System.out.println("Attack places for Knight b1");
         for (Place place : chessBoard.armyWhite[9].getAttackPlaces()){
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
@@ -46,17 +47,17 @@ public class Main {
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
         }
 
-        System.out.printf("doMove b2b4: %b\n", chessBoard.move("b2b4"));
-        System.out.printf("doMove b4b5: %b\n", chessBoard.move("B4b5"));
-        System.out.printf("doMove a7a5: %b\n", chessBoard.move("a7a5"));
-        System.out.printf("doMove e4e5: %b\n", chessBoard.move("e4e5"));
+        System.out.printf("move b2b4: %b\n", chessBoard.move("b2b4"));
+        System.out.printf("move b4b5: %b\n", chessBoard.move("B4b5"));
+        System.out.printf("move a7a5: %b\n", chessBoard.move("a7a5"));
+        System.out.printf("move e4e5: %b\n", chessBoard.move("e4e5"));
 
         System.out.println("Attack places for white Pawn at b5");
         for (Place place : chessBoard.armyWhite[1].getAttackPlaces()){
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
         }
 
-        System.out.printf("doMove g2g4: %b\n", chessBoard.move("g2g4"));
+        System.out.printf("move g2g4: %b\n", chessBoard.move("g2g4"));
         System.out.println("Attack places for white Pawn at f2");
         for (Place place : chessBoard.armyWhite[5].getAttackPlaces()){
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
@@ -66,13 +67,19 @@ public class Main {
         for (Place place : chessBoard.armyWhite[1].getAttackPlaces()){
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
         }
-        System.out.printf("doMove b5a6: %b\n", chessBoard.move("b5a6"));
-        System.out.printf("doMove a2a4: %b\n", chessBoard.move("a2a4"));
+        System.out.printf("move b5a6: %b\n", chessBoard.move("b5a6"));
+        System.out.printf("move a2a4: %b\n", chessBoard.move("a2a4"));
 
         System.out.println("Attack places for white Pawn at a4");
         for (Place place : chessBoard.armyWhite[0].getAttackPlaces()){
             System.out.printf("%d : %d \n", place.placeV, place.placeH);
         }
+
+
+        System.out.printf("move e7e6: %b\n", chessBoard.move("e7e6"));
+        System.out.printf("move f8b4: %b\n", chessBoard.move("f8b4"));
+        System.out.printf("move d2d3: %b\n", chessBoard.move("d2d3"));
+        System.out.printf("move a2a4: %b\n", chessBoard.move("a2a4"));
 
         System.out.println();
         System.out.println("===== All results are in internal integer addressing =====");

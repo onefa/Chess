@@ -10,8 +10,10 @@ public class ChessBoard {
     final static int DIMENSION_H = 8;
     final static int MAX_VERTICAL = DIMENSION_V-1;
     final static int MAX_HORIZONTAL = DIMENSION_H-1;
-    Piece[] armyWhite = new Piece[2 * DIMENSION_V];
-    Piece[] armyBlack = new Piece[2 * DIMENSION_V];
+    final static int KING_INDEX = 12;
+    Piece[][] armies = new Piece[2][2*DIMENSION_V]; // Arrays of armies.
+    Piece[] armyWhite = armies[0];
+    Piece[] armyBlack = armies[1];
     Square[][] boardArray = new Square[DIMENSION_V][DIMENSION_H];
     private static EnPassant enPassant;
     private final static HashMap<Character, Integer> charAddress = new HashMap<>();
@@ -79,13 +81,15 @@ public class ChessBoard {
 
     }
 
+    //
+    public void killPiece(Piece piece){
+        piece.setInGame(false);
+        setEmptySquare(piece.getPlace().placeV, piece.getPlace().placeH);
+    }
+
     // Clear square from piece
     public void setEmptySquare (int placeV, int placeH){
         boardArray[placeV][placeH].setPiece(null);
-    }
-
-    public void killPiece(Piece piece){
-        piece.outGame();
     }
 
     // Checks if square is empty
@@ -115,6 +119,19 @@ public class ChessBoard {
         }
     }
 
+    private boolean checkKing(boolean color) {
+        for (Piece piece : armies[color ? 1 : 0]) {
+            if (piece != null && piece.getAttackPlaces() != null && piece.isInGame()) {
+                for (Place place : piece.getAttackPlaces()) {
+                    if (place.equals(armies[color ? 0 : 1][KING_INDEX])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean move (String fromTo){
         int[] coordinatesArray = new int[4];
 
@@ -127,40 +144,44 @@ public class ChessBoard {
                     return false;
                 }
             }
-            if (doMove (new Place(coordinatesArray[0], coordinatesArray[1]),
-                        new Place(coordinatesArray[2], coordinatesArray[3]))) {
-                return true;
+            if (boardArray[coordinatesArray[0]][coordinatesArray[1]].getPiece() != null) {
+                if (doMove (new Place(coordinatesArray[0], coordinatesArray[1]),
+                            new Place(coordinatesArray[2], coordinatesArray[3]))) {
+                    Piece movedPiece = boardArray[coordinatesArray[2]][coordinatesArray[3]].getPiece();
+                    if (movedPiece.getClass() == Pawn.class) {
+                        if (enPassant != null && enPassant.getMaster()!=null
+                                && movedPiece.getPlace().equals(enPassant.getPlace())) {
+                            killPiece(enPassant.getMaster());
+                            clearEnPassant();
+                        }
+                        if (Math.abs(coordinatesArray[1] - coordinatesArray[3]) == 2) {
+                            clearEnPassant();
+                            setEnPassant((Pawn) movedPiece);
+                            return true;
+                        }
+                    }
+                    clearEnPassant();
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public boolean doMove (Place placeFrom, Place placeTo) {
+    private boolean doMove (Place placeFrom, Place placeTo) {
         Piece movedPiece = boardArray[placeFrom.placeV][placeFrom.placeH].getPiece();
-        if (movedPiece == null) {
-            return false;
-        }
         for (Place attackPlace : movedPiece.getAttackPlaces()) {
             if (attackPlace.equals(placeTo)) {
                 setEmptySquare(movedPiece.getPlace().placeV, movedPiece.getPlace().placeH);
                 movedPiece.setPlace(placeTo);
                 boardArray[placeTo.placeV][placeTo.placeH].setPiece(movedPiece);
-
-                if (movedPiece.getClass() == Pawn.class) {
-                    if (enPassant != null && enPassant.getMaster()!=null
-                                          && movedPiece.getPlace().equals(enPassant.getPlace())) {
-                        killPiece(enPassant.getMaster());
-                        enPassant.clearMaster();
-                    }
-                    if (Math.abs(placeFrom.getPlace().placeH - placeTo.getPlace().placeH) == 2) {
-                        if (enPassant != null) {
-                            enPassant.clearMaster();
-                        }
-                        setEnPassant((Pawn) movedPiece);
-                        return true;
-                    }
+                if (checkKing(movedPiece.color)) {
+                    setEmptySquare(movedPiece.getPlace().placeV, movedPiece.getPlace().placeH);
+                    movedPiece.setPlace(placeFrom);
+                    boardArray[placeFrom.placeV][placeFrom.placeH].setPiece(movedPiece);
+                    return false;
                 }
-                enPassant.clearMaster();
+
                 return true;
             }
         }
@@ -176,6 +197,11 @@ public class ChessBoard {
         enPassant.setMaster(pawn);
     }
 
+    private void clearEnPassant() {
+        if (enPassant != null) {
+            enPassant.clearMaster();
+        }
+    }
 
     private static class EnPassant extends Piece{
 

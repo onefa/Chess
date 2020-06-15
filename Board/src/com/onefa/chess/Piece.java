@@ -20,10 +20,8 @@ public abstract class Piece extends Place {
         return inGame;
     }
 
-    // Remove Piece out of game
-    public void outGame(){
-        inGame = false;
-        board.setEmptySquare(this.getPlace().placeV, this.getPlace().placeH);
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
 
     public Place functionResult (Place place, Direction function) {
