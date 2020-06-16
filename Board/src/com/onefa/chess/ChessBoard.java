@@ -4,41 +4,55 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChessBoard {
+    Piece[][] armies = new Piece[2][2 * DIMENSION_V]; // Arrays of armies.
+    Square[][] boardArray = new Square[DIMENSION_V][DIMENSION_H];
+    private static EnPassant enPassant;
+
     final static boolean WHITE = true;
     final static boolean BLACK = false;
+    final static boolean[] colors = {WHITE, BLACK};
     final static int DIMENSION_V = 8;
     final static int DIMENSION_H = 8;
     final static int MAX_VERTICAL = DIMENSION_V - 1;
     final static int MAX_HORIZONTAL = DIMENSION_H - 1;
     final static int KING_INDEX = 12;
-    Piece[][] armies = new Piece[2][2 * DIMENSION_V]; // Arrays of armies.
-    Piece[] armyWhite = armies[0];
-    Piece[] armyBlack = armies[1];
-    Square[][] boardArray = new Square[DIMENSION_V][DIMENSION_H];
-    private static EnPassant enPassant;
+    enum Move {
+        SUCCESSFUL,
+        CAPTURE,
+        KING_UNDER_ATTACK,
+        INVALID_COORDINATES,
+        CHECK,
+        CAPTURE_CHECK,
+        MATE,
+        CAPTURE_MATE
+    }
+    private Move moveResult = Move.SUCCESSFUL;
+
     private final static HashMap<Character, Integer> charAddress = new HashMap<>();
         static {
-        charAddress.put('a', 0);
-        charAddress.put('b', 1);
-        charAddress.put('c', 2);
-        charAddress.put('d', 3);
-        charAddress.put('e', 4);
-        charAddress.put('f', 5);
-        charAddress.put('g', 6);
-        charAddress.put('h', 7);
-        charAddress.put('1', 0);
-        charAddress.put('2', 1);
-        charAddress.put('3', 2);
-        charAddress.put('4', 3);
-        charAddress.put('5', 4);
-        charAddress.put('6', 5);
-        charAddress.put('7', 6);
-        charAddress.put('8', 7);
+            charAddress.put('a', 0);
+            charAddress.put('b', 1);
+            charAddress.put('c', 2);
+            charAddress.put('d', 3);
+            charAddress.put('e', 4);
+            charAddress.put('f', 5);
+            charAddress.put('g', 6);
+            charAddress.put('h', 7);
+            charAddress.put('1', 0);
+            charAddress.put('2', 1);
+            charAddress.put('3', 2);
+            charAddress.put('4', 3);
+            charAddress.put('5', 4);
+            charAddress.put('6', 5);
+            charAddress.put('7', 6);
+            charAddress.put('8', 7);
         }
 
     // Constructor.
     // Creates array of Square's, creates armies on initial position
     public ChessBoard() {
+
+        // Fill the boardArray with objects Squares (black/white)
         boolean color = BLACK;
         for (int i = 0; i < DIMENSION_V; i++) {
             for (int j = 0; j < DIMENSION_H; j++) {
@@ -47,38 +61,26 @@ public class ChessBoard {
             }
         }
 
-        for (int i = 0; i < DIMENSION_V; i++) {
-            armyWhite[i] = new Pawn(this, i, 1, WHITE);
-        }
+        // Fill with pieces the armies array
         {
-            int i = DIMENSION_V;
-            int j = 0;
-            armyWhite[i++] = new Rook(this, j++, 0, WHITE);
-            armyWhite[i++] = new Knight(this, j++, 0, WHITE);
-            armyWhite[i++] = new Bishop(this, j++, 0, WHITE);
-            armyWhite[i++] = new Queen(this, j++, 0, WHITE);
-            armyWhite[i++] = new King(this, j++, 0, WHITE);
-            armyWhite[i++] = new Bishop(this, j++, 0, WHITE);
-            armyWhite[i++] = new Knight(this, j++, 0, WHITE);
-            armyWhite[i] = new Rook(this, j, 0, WHITE);
+            for (boolean pieceColor : colors) {
+                int placeV;
+                int army = pieceColor == WHITE ? 0 : 1;
+                int placeH = pieceColor == WHITE ? 1 : 6;
+                for (placeV = 0; placeV < DIMENSION_V; placeV++) {
+                    armies[army][placeV] = new Pawn(this, placeV, placeH, pieceColor);
+                }
+                placeH = pieceColor == WHITE ? 0 : 7;
+                armies[army][placeV] = new Rook(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Knight(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Bishop(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Queen(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new King(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Bishop(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Knight(this, placeV-DIMENSION_V, placeH, pieceColor);
+                armies[army][++placeV] = new Rook(this, placeV-DIMENSION_V, placeH, pieceColor);
+            }
         }
-
-        for (int i = 0; i < DIMENSION_V; i++) {
-            armyBlack[i] = new Pawn(this, i, 6, BLACK);
-        }
-        {
-            int i = DIMENSION_V;
-            int j = 0;
-            armyBlack[i++] = new Rook(this, j++, 7, BLACK);
-            armyBlack[i++] = new Knight(this, j++, 7, BLACK);
-            armyBlack[i++] = new Bishop(this, j++, 7, BLACK);
-            armyBlack[i++] = new Queen(this, j++, 7, BLACK);
-            armyBlack[i++] = new King(this, j++, 7, BLACK);
-            armyBlack[i++] = new Bishop(this, j++, 7, BLACK);
-            armyBlack[i++] = new Knight(this, j++, 7, BLACK);
-            armyBlack[i] = new Rook(this, j, 7, BLACK);
-        }
-
     }
 
     //
@@ -120,10 +122,10 @@ public class ChessBoard {
     }
 
     private boolean checkKing(boolean color) {
-        for (Piece piece : armies[color ? 1 : 0]) {
-            if (piece != null && piece.getAttackPlaces() != null && piece.isInGame()) {
-                for (Place place : piece.getAttackPlaces()) {
-                    if (place.equals(armies[color ? 0 : 1][KING_INDEX])) {
+        for (Piece attackPiece : armies[color ? 1 : 0]) {
+            if (attackPiece != null && attackPiece.getAttackPlaces() != null && attackPiece.isInGame()) {
+                for (Place attackPlace : attackPiece.getAttackPlaces()) {
+                    if (attackPlace.equals(armies[color ? 0 : 1][KING_INDEX].getPlace())) {
                         return true;
                     }
                 }
@@ -132,8 +134,46 @@ public class ChessBoard {
         return false;
     }
 
+    private boolean checkMateKing(boolean color) {
+        for (Piece attackPiece : armies[color ? 1 : 0]) {
+            if (attackPiece != null && attackPiece.getAttackPlaces() != null && attackPiece.isInGame()) {
+                for (Place attackPlace : attackPiece.getAttackPlaces()) {
+                    if (attackPlace.equals(armies[color ? 0 : 1][KING_INDEX].getPlace())) {
+
+                        moveResult = Move.KING_UNDER_ATTACK;
+                        for (Piece defencePiece : armies[color ? 0 : 1]) {
+                            if (defencePiece != null &&
+                                defencePiece.isInGame() &&
+                                defencePiece.getAttackPlaces() != null) {
+                                Place oldDefencePlace = new Place(defencePiece.getPlace().placeV,
+                                        defencePiece.getPlace().placeH);
+                                for (Place defencePlace : defencePiece.getAttackPlaces()) {
+                                    if (doMove(oldDefencePlace, defencePlace)) {
+                                        moveResult = Move.CHECK;
+                                        setEmptySquare(defencePlace.getPlace().placeV, defencePlace.getPlace().placeH);
+                                        defencePiece.setPlace(oldDefencePlace.getPlace());
+                                        boardArray[oldDefencePlace.getPlace().placeV][oldDefencePlace.getPlace().placeH].setPiece(defencePiece);
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public Move getMoveResult() {
+        return moveResult;
+    }
+
     public boolean move(String fromTo) {
         int[] coordinatesArray = new int[4];
+        moveResult = Move.SUCCESSFUL;
 
         if (fromTo.length() == 4) {
             for (int i = 0; i < 4; i++) {
@@ -141,12 +181,14 @@ public class ChessBoard {
                 if (charAddress.containsKey(charKey)) {
                     coordinatesArray[i] = charAddress.get(charKey);
                 } else {
+                    moveResult = Move.INVALID_COORDINATES;
                     return false;
                 }
             }
             if (boardArray[coordinatesArray[0]][coordinatesArray[1]].getPiece() != null) {
                 if (doMove (new Place(coordinatesArray[0], coordinatesArray[1]),
                             new Place(coordinatesArray[2], coordinatesArray[3]))) {
+
                     Piece movedPiece = boardArray[coordinatesArray[2]][coordinatesArray[3]].getPiece();
                     if (movedPiece.getClass() == Pawn.class) {
                         if (enPassant != null && enPassant.getMaster() != null
@@ -157,33 +199,67 @@ public class ChessBoard {
                         if (Math.abs(coordinatesArray[1] - coordinatesArray[3]) == 2) {
                             clearEnPassant();
                             setEnPassant((Pawn) movedPiece);
+ //                           moveResult = Move.SUCCESSFUL;
                             return true;
                         }
                     }
                     clearEnPassant();
+ //                   moveResult = Move.SUCCESSFUL;
                     return true;
                 }
             }
         }
+        moveResult = Move.INVALID_COORDINATES;
         return false;
     }
 
     private boolean doMove(Place placeFrom, Place placeTo) {
-        Piece movedPiece = boardArray[placeFrom.placeV][placeFrom.placeH].getPiece();
+        Piece movedPiece = boardArray[placeFrom.getPlace().placeV][placeFrom.getPlace().placeH].getPiece();
+        Place savedPlace = new Place(placeFrom.placeV, placeFrom.placeH);
         for (Place attackPlace : movedPiece.getAttackPlaces()) {
-            if (attackPlace.equals(placeTo)) {
+            if (attackPlace.equals(placeTo.getPlace())) {
                 setEmptySquare(movedPiece.getPlace().placeV, movedPiece.getPlace().placeH);
-                movedPiece.setPlace(placeTo);
-                boardArray[placeTo.placeV][placeTo.placeH].setPiece(movedPiece);
-                if (checkKing(movedPiece.color)) {
+                movedPiece.setPlace(placeTo.getPlace());
+                boardArray[placeTo.getPlace().placeV][placeTo.getPlace().placeH].setPiece(movedPiece);
+
+                // Handle CHECK for our King
+                if (checkKing(movedPiece.color) && !(moveResult == Move.CHECK)) {
                     setEmptySquare(movedPiece.getPlace().placeV, movedPiece.getPlace().placeH);
-                    movedPiece.setPlace(placeFrom);
-                    boardArray[placeFrom.placeV][placeFrom.placeH].setPiece(movedPiece);
+                    movedPiece.setPlace(savedPlace);
+                    boardArray[savedPlace.getPlace().placeV][savedPlace.getPlace().placeH].setPiece(movedPiece);
+                    moveResult = Move.KING_UNDER_ATTACK;
                     return false;
                 }
+
+                for (Piece opponentPiece : armies[movedPiece.color == WHITE ? 1 : 0]) {
+                    if (opponentPiece.getPlace().equals(movedPiece.getPlace())){
+                        killPiece(opponentPiece);
+                        moveResult = Move.CAPTURE;
+                    }
+                }
+
+                if (moveResult != Move.KING_UNDER_ATTACK) {
+
+                    // Handle MATE for opponent's King
+                    if (checkMateKing(!movedPiece.color)) {
+                        moveResult = moveResult == Move.CAPTURE ? Move.CAPTURE_MATE : Move.MATE;
+                        return true;
+                    } else if (moveResult == Move.CHECK) {
+                        return true;
+                    }
+
+                    // Handle CHECK for opponent's King
+                    if (checkKing(!movedPiece.color)) {
+                        moveResult = moveResult == Move.CAPTURE ? Move.CAPTURE_CHECK : Move.CHECK;
+                        return true;
+                    }
+
+                }
+                moveResult = Move.SUCCESSFUL;
                 return true;
             }
         }
+        moveResult = Move.INVALID_COORDINATES;
         return false;
     }
 

@@ -42,11 +42,14 @@ public class Pawn extends Piece {
         }
 
         // Checks square for one and two steps forward
-        for (int i = 1; i < 3; i++) {
-            if (board.isEmptySquare(this.getPlace().placeV, this.getPlace().placeH + attackDirection * i)) {
-                aPlaces.add(new Place(this.getPlace().placeV, this.getPlace().placeH + attackDirection * i));
-            }
+        if (board.isEmptySquare(this.getPlace().placeV, this.getPlace().placeH + attackDirection)) {
+            aPlaces.add(new Place(this.getPlace().placeV, this.getPlace().placeH + attackDirection));
         }
+        if (board.isEmptySquare(this.getPlace().placeV, this.getPlace().placeH + attackDirection * 2) &&
+            this.getPlace().placeH * 10 == 35 - 25 * attackDirection) {
+            aPlaces.add(new Place(this.getPlace().placeV, this.getPlace().placeH + attackDirection * 2));
+        }
+
 
         // Checks square for attack steps
         for (int i = -1; i < 2; i = i + 2) {
